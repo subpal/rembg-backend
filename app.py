@@ -22,34 +22,13 @@ def remove_background():
 
     # Convert image to bytes
     img_byte_arr = io.BytesIO()
+    scale_percentage = 50
+    new_width = int(img_no_bg.width * scale_percentage / 100)
+    new_height = int(img_no_bg.height * scale_percentage / 100)
+    img_no_bg = img_no_bg.resize((new_width, new_height))
     img_no_bg.save(img_byte_arr, format='PNG')
     img_byte_arr.seek(0)
-    print("Successfull api call")
-    # Return the image without background as a response
-    return (
-        img_byte_arr.read(),
-        200,
-        {'Content-Type': 'image/png'}
-    )
-
-@app.route('/remove-backgroundv2', methods=['POST'])
-def remove_background_v2():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file provided'}), 400
-    
-    # Read the image file
-    image_file = request.files['image']
-    image = Image.open(image_file.stream)
-    out_path = "/Users/aashish.singh/Self/rembg/rembg-backend/outfile/"
-    pipe = pipeline("image-segmentation", model="briaai/RMBG-1.4", trust_remote_code=True)
-    pillow_image = pipe(image)
-
-
-    img_byte_arr = io.BytesIO()
-    pillow_image.save(img_byte_arr, format='PNG')
-    img_byte_arr.seek(0)
-    print("Successfull api call")
-    
+    # print("Successfull api call")
     # Return the image without background as a response
     return (
         img_byte_arr.read(),
